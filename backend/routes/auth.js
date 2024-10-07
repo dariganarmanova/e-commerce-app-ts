@@ -12,9 +12,9 @@ const JWT_SECRET = 'nvdsvnjekna'
 
 app.post('/sign', async (req, res) => {
     try {
-        const { email, name, password } = req.body
+        const { email, name, password, role } = req.body
         const newPassword = await bcrypt.hash(password, 10)
-        const result = await pool.query("INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3) RETURNING *", [name, email, newPassword, role])
+        const result = await pool.query("INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *", [name, email, newPassword, role])
         const userId = result.rows[0].id
         const token = jwt.sign({ id: userId, name: result.rows[0].name, email: result.rows[0].email }, JWT_SECRET)
         if (result) {
