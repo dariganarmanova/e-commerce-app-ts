@@ -13,18 +13,31 @@ const JWT_SECRET = 'nvdsvnjekna'
 app.post('/sign', async (req, res) => {
     try {
         const { email, name, password, role } = req.body
+        if (!email || !name || !password || !role) {
+            return res.status(400).json({ message: "All the fields are required" })
+        }
+        try {
+            const result = await pool.query("SELECT * FROM users WHERE email=$1", [email])
+            if (result) {
+                return res.status(400).json({ message: "this email user already exists" })
+            }
+        } catch (error) {
+            console.log(error)
+        }
         const newPassword = await bcrypt.hash(password, 10)
+        console.log(newPassword)
         const result = await pool.query("INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *", [name, email, newPassword, role])
+        console.log(result)
         const userId = result.rows[0].id
         const token = jwt.sign({ id: userId, name: result.rows[0].name, email: result.rows[0].email }, JWT_SECRET)
         console.log(token)
         if (result) {
-            res.status(201).json({ message: "your login was successful", id: userId, token: token })
+            res.status(201).json({ message: "your signin was successful", id: userId, token: token })
         } else {
-            console.log("unexpected error")
+            return res.status(401).json({ message: 'trouble with saving' })
         }
     } catch (error) {
-        console.log(error)
+        res.status(500).json({ message: error })
     }
 })
 
@@ -45,7 +58,7 @@ app.post('/log', async (req, res) => {
             res.status(401).json({ message: "the passwords do not match" })
         }
     } catch (error) {
-        console.log(error)
+        res.status(500).json({ message: "trouble saving your data, server error" })
     }
 
 })

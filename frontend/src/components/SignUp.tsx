@@ -16,28 +16,19 @@ const SignUp = () => {
   const [role, setRole] = useState<"buyer" | "seller">("buyer");
 
   const handleSubmit = async (e: React.FormEvent) => {
-    const token = "";
     e.preventDefault();
     try {
       const newUser: Sign = {
         id: 0,
-        name: "",
-        password: "",
-        email: "",
+        name,
+        password,
+        email,
         role,
       };
-      const result = await axios.post(
-        "http://localhost:5005/sign",
-        { newUser },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      //const token = result.data.token;
+      const result = await axios.post("http://localhost:5005/sign", newUser);
+      const token = result.data.token;
       localStorage.setItem("token", token);
-      if (result) {
+      if (result.data) {
         alert("User successfuly signed in");
       } else {
         alert("Some problem with server");

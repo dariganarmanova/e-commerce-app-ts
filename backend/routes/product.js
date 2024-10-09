@@ -23,7 +23,7 @@ app.get("/products", async (req, res, next) => {
 app.get("/products/userId", async (req, res, next) => {
     try {
         const { userId } = req.query
-        const result = await pool.query("SELECT * FROM products WHERE id = $1", [userId])
+        const result = await pool.query("SELECT * FROM products WHERE user_id = $1", [userId])
         if (result) {
             res.json(result.rows)
         } else {

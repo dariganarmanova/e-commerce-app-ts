@@ -17,7 +17,6 @@ interface CustomerId extends JwtPayload {
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Products[]>([]);
-  const [userId, setUserId] = useState<number | null>(null);
 
   function getUserIdFromToken() {
     const token = localStorage.getItem("token");
@@ -34,7 +33,7 @@ const ProductList: React.FC = () => {
       try {
         const userId = getUserIdFromToken();
         const result = await axios.get<Products[]>(
-          "http://localhost:5005/products/userId",
+          `http://localhost:5005/products`,
           {
             params: { userId },
           }
