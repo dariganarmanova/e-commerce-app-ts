@@ -52,7 +52,6 @@ app.post("/products", verifyToken, async (req, res, next) => {
             const err = new Error("Unable to create this")
             err.status(500)
             return next(err)
-
         }
     } catch (err) {
         next(err)

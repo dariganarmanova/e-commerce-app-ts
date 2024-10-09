@@ -14,10 +14,15 @@ const NavBar = () => {
             <Link to="/auth">Authenticate</Link>
           </li>
           <li>
-            <Link to="/products">Products</Link>
+            <Link to="/products">Your products</Link>
           </li>
           <li>
-            <Link to="/chat">Chat with Seller</Link>
+            <Link to="/allProducts">View all products on marketplace</Link>
+          </li>
+          <li>
+            <Link to="/analytics">
+              View analytics of quantities of your products selled
+            </Link>
           </li>
           <li>
             <Link to="/help">Help</Link>

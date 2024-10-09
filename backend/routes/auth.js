@@ -4,6 +4,7 @@ const cors = require('cors')
 const pool = require('../db')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const verifyToken = require('../middleware/jwtAuth')
 
 app.use(cors())
 app.use(express.json())
@@ -61,6 +62,22 @@ app.post('/log', async (req, res) => {
         res.status(500).json({ message: "trouble saving your data, server error" })
     }
 
+})
+
+app.get('/user', verifyToken, async (req, res) => {
+    try {
+        const { id: userId } = req.user
+        const result = await pool.query("SELECT * FROM users WHERE id=$1", [userId])
+        if (result) {
+            res.status(201).json(result.data)
+        } else {
+            const err = new Error("Unable to find this user")
+            err.status(404)
+            return next(err)
+        }
+    } catch (error) {
+        next(err)
+    }
 })
 
 module.exports = app
