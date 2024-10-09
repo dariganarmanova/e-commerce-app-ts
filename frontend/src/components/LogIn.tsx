@@ -17,11 +17,20 @@ const LogIn: React.FC = () => {
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
+    const token = "";
     e.preventDefault();
     try {
-      const result = await axios.post("http://localhost:5005/log", user);
-      const token = result.data.token;
-      localStorage.setItem("token", result.data.token);
+      const result = await axios.post(
+        "http://localhost:5005/log",
+        { user },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      //const token = result.data.token;
+      localStorage.setItem("token", token);
       if (result) {
         alert("User logged in");
       } else {

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { type } from "os";
 
 interface Sign {
   id: number;
@@ -17,6 +16,7 @@ const SignUp = () => {
   const [role, setRole] = useState<"buyer" | "seller">("buyer");
 
   const handleSubmit = async (e: React.FormEvent) => {
+    const token = "";
     e.preventDefault();
     try {
       const newUser: Sign = {
@@ -26,9 +26,17 @@ const SignUp = () => {
         email: "",
         role,
       };
-      const result = await axios.post("http://localhost:5005/sign", newUser);
-      const token = result.data.token;
-      localStorage.setItem("token", result.data.token);
+      const result = await axios.post(
+        "http://localhost:5005/sign",
+        { newUser },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      //const token = result.data.token;
+      localStorage.setItem("token", token);
       if (result) {
         alert("User successfuly signed in");
       } else {
