@@ -14,6 +14,8 @@ app.get("/products", async (req, res, next) => {
             res.json(result.rows)
         } else {
             const err = new Error("Unable to fetch")
+            err.status(404)
+            return next(err)
         }
     } catch (err) {
         next(err)
@@ -21,14 +23,16 @@ app.get("/products", async (req, res, next) => {
 })
 
 //here get the products of the seller only
-app.get("/products/userId", async (req, res, next) => {
+app.get("/products/userId", verifyToken, async (req, res, next) => {
     try {
-        const { userId } = req.query
+        const { id: userId } = req.user
         const result = await pool.query("SELECT * FROM products WHERE user_id = $1", [userId])
         if (result) {
             res.json(result.rows)
         } else {
             const err = new Error("Unable to fetch or find")
+            err.status(404)
+            return next(err)
         }
     } catch (err) {
         next(err)
@@ -46,6 +50,9 @@ app.post("/products", verifyToken, async (req, res, next) => {
             res.status(201).json({ message: "Successfully created!" })
         } else {
             const err = new Error("Unable to create this")
+            err.status(500)
+            return next(err)
+
         }
     } catch (err) {
         next(err)

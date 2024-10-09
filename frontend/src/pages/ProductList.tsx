@@ -1,6 +1,5 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { jwtDecode, JwtPayload } from "jwt-decode";
 import axios from "axios";
 
 interface Products {
@@ -11,31 +10,19 @@ interface Products {
   price: number;
 }
 
-interface CustomerId extends JwtPayload {
-  userId: number;
-}
-
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Products[]>([]);
 
-  function getUserIdFromToken() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      return null;
-    }
-    const decoded = jwtDecode<CustomerId>(token);
-    console.log(decoded);
-    return decoded.userId;
-  }
-
   useEffect(() => {
     const handleFetch = async () => {
+      const token = localStorage.getItem("token");
       try {
-        const userId = getUserIdFromToken();
         const result = await axios.get<Products[]>(
           `http://localhost:5005/products`,
           {
-            params: { userId },
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
         );
         if (result) {
@@ -46,7 +33,7 @@ const ProductList: React.FC = () => {
       }
     };
     handleFetch();
-  }, []);
+  });
 
   return (
     <div>
@@ -54,8 +41,7 @@ const ProductList: React.FC = () => {
       <ul>
         {products.map((product) => (
           <li key={product.id}>
-            {product.product_name}
-            {product.description} - {product.price}
+            {product.product_name} - {product.description} - {product.price}
           </li>
         ))}
       </ul>
