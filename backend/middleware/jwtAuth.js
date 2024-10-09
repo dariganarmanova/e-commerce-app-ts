@@ -1,15 +1,19 @@
-const jwt = require('jsonwebtoken')
-const JWT_SECRET = 'nvdsvnjekna'
+const jwt = require('jsonwebtoken');
 
-const authenticateToken = (req, res, next) => {
-    console.log("middlewarehit")
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
-    if (token == null) return res.sendStatus(401)
-    jwt.verify(token, JWT_SECRET, (err, user) => {
-        if (err) return res.sendStatus(403)
-        req.user = user
-        next()
-    })
-}
-module.exports = authenticateToken;
+const verifyToken = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader) {
+        const token = authHeader.split(' ')[1]; // Extract token from "Bearer <token>"
+        jwt.verify(token, 'nvdsvnjekna', (err, user) => {
+            if (err) {
+                return res.status(403).json({ message: 'Invalid token' });
+            }
+            req.user = user; // Attach user payload (e.g., userId, email) to req
+            next();
+        });
+    } else {
+        return res.status(401).json({ message: 'Authorization token missing' });
+    }
+};
+
+module.exports = verifyToken

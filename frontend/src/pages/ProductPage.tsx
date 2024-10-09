@@ -8,12 +8,7 @@ interface Products {
   id: number;
   product_name: string;
   description: string;
-  user_id: number | null;
   price: number;
-}
-
-interface CustomerId extends JwtPayload {
-  userId: number;
 }
 
 //in this component we are just going to create a separate field to post some products
@@ -22,7 +17,6 @@ const ProductPage: React.FC = () => {
   const [products, setProducts] = useState<Products>({
     id: 0,
     description: "",
-    user_id: 0,
     price: 0,
     product_name: "",
   });
@@ -38,13 +32,13 @@ const ProductPage: React.FC = () => {
   //this is the post request for creating the product
 
   const handleCreate = async (e: React.FormEvent) => {
-    const token = localStorage.getItem("token");
     e.preventDefault();
+    const token = localStorage.getItem("token");
     try {
       const newProduct = { ...products };
       const result = await axios.post(
         "http://localhost:5005/products",
-        { newProduct },
+        newProduct,
         {
           headers: {
             Authorization: `Bearer ${token}`,
