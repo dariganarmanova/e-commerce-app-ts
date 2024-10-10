@@ -2,60 +2,101 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const pool = require("../db")
+const multer = require('multer');
+const path = require('path');
 const verifyToken = require('../middleware/jwtAuth')
 
 app.use(cors())
 app.use(express.json())
 
-app.get("/products", async (req, res, next) => {
+//get the products of the seller only with an image
+app.get('/products', verifyToken, async (req, res, next) => {
+    const { id: userId } = req.user;
+
+    try {
+        const productResult = await pool.query(
+            "SELECT * FROM products WHERE user_id = $1",
+            [userId]
+        );
+        console.log(userId)
+        const products = productResult.rows
+        console.log(products)
+        const productsWithImages = await Promise.all(products.map(async (product) => {
+            const imageResult = await pool.query(
+                "SELECT url FROM images WHERE product_id = $1",
+                [product.id]
+            );
+            const imageUrl = imageResult.rows.length ? imageResult.rows[0].url : null;
+            return { ...product, imageUrl };
+        }));
+        console.log(productsWithImages)
+        res.json(productsWithImages)
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+//here get all of the products 
+app.get("/productsAll", verifyToken, async (req, res, next) => {
     try {
         const result = await pool.query("SELECT * FROM products")
-        if (result) {
-            res.json(result.rows)
-        } else {
-            const err = new Error("Unable to fetch")
-            err.status(404)
-            return next(err)
-        }
-    } catch (err) {
-        next(err)
-    }
-})
+        const image = await pool.query("SELECT * FROM images")
 
-//here get the products of the seller only
-app.get("/products/userId", verifyToken, async (req, res, next) => {
-    try {
-        const { id: userId } = req.user
-        const result = await pool.query("SELECT * FROM products WHERE user_id = $1", [userId])
-        if (result) {
-            res.json(result.rows)
+        const resultProduct = result.rows
+        const imageUrl = result.rows
+
+        if (result || image) {
+            res.status(201).json({ ...resultProduct, imageUrl })
         } else {
-            const err = new Error("Unable to fetch or find")
+            const err = new Error("Unable to fetch data")
             err.status(404)
             return next(err)
         }
-    } catch (err) {
+    } catch (error) {
         next(err)
     }
 })
 
 //here creating the product
-app.post("/products", verifyToken, async (req, res, next) => {
-    try {
-        const { product_name, description, price } = req.body
-        const { id: userId } = req.user
-        console.log(userId)
-        const result = await pool.query("INSERT INTO products (product_name, description, user_id, price) VALUES ($1, $2,$3,$4) RETURNING *", [product_name, description, userId, price])
-        if (result) {
-            res.status(201).json({ message: "Successfully created!" })
-        } else {
-            const err = new Error("Unable to create this")
-            err.status(500)
-            return next(err)
-        }
-    } catch (err) {
-        next(err)
+const storage = multer.diskStorage({
+    destination: './uploads/',
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}_${file.originalname}`);
     }
-})
+});
+const upload = multer({ storage });
+
+//route to create a product with an image
+app.post('/products', verifyToken, upload.single('image'), async (req, res, next) => {
+    const { product_name, description, price } = req.body;
+    const { id: userId } = req.user;
+    const imageFile = req.file;
+
+    try {
+        const productResult = await pool.query(
+            "INSERT INTO products (product_name, description, user_id, price) VALUES ($1, $2, $3, $4) RETURNING *",
+            [product_name, description, userId, price]
+        );
+
+        const productId = productResult.rows[0].id;
+
+        if (imageFile) {
+            const imageUrl = `http://localhost:5005/uploads/${imageFile.filename}`;
+            await pool.query(
+                "INSERT INTO images (url, product_id) VALUES ($1, $2)",
+                [imageUrl, productId]
+            );
+        }
+
+        res.status(201).json({ message: 'Product and image successfully created!' });
+
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 module.exports = app

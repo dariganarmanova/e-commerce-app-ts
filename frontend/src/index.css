@@ -1,3 +1,85 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+.image {
+  width: 200px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  object-fit: cover;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto;
+  gap: 20px;
+}
+
+.product {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: medium;
+  font-weight: 600;
+}
+
+.productPrice {
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  font-size: medium;
+}
+
+.textHeader {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: xx-large;
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 60px;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 12px;
+}
+
+.productDescriptionInput {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-top: 10px;
+  width: 100%;
+  font-size: large;
+}
+
+.productNameInput {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  width: 100%;
+  font-size: large;
+}
+
+.productPriceInput {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  width: 100%;
+  font-size: large;
+  margin-top: 10px;
+}
+
+.createText {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: large;
+}
+
+.submit {
+  padding: 10px;
+  margin-top: 10px;
+  background-color: burlywood;
+  border: 1px solid;
+  border-radius: 6px;
+  font-family: Arial, Helvetica, sans-serif;
+}

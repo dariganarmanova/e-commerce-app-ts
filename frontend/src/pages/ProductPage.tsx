@@ -1,87 +1,90 @@
 import React, { useState } from "react";
-//import "../assets/${product_name.jpg}";
 import axios from "axios";
-import { jwtDecode, JwtPayload } from "jwt-decode";
 import ProductList from "./ProductList";
+import "../index.css";
 
-interface Products {
-  id: number;
-  product_name: string;
-  description: string;
-  price: number;
-}
+const ProductUpload: React.FC = () => {
+  const [productName, setProductName] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
-//in this component we are just going to create a separate field to post some products
-
-const ProductPage: React.FC = () => {
-  const [products, setProducts] = useState<Products>({
-    id: 0,
-    description: "",
-    price: 0,
-    product_name: "",
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProducts((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedImage(event.target.files[0]);
+    }
   };
 
-  //this is the post request for creating the product
-
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
     const token = localStorage.getItem("token");
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("product_name", productName);
+    formData.append("description", description);
+    formData.append("price", price);
+    if (selectedImage) {
+      formData.append("image", selectedImage); // Add the image file
+    }
+
     try {
-      const newProduct = { ...products };
-      const result = await axios.post(
+      const response = await axios.post(
         "http://localhost:5005/products",
-        newProduct,
+        formData,
         {
           headers: {
+            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      setProducts(result.data);
-      if (result) {
-        alert("Your product was sucessfully created!");
-      } else {
-        alert("Having trouble creating");
-      }
+      alert("Product created successfully!");
     } catch (error) {
-      console.log(error);
+      console.error("Error uploading product:", error);
     }
   };
 
   return (
     <div>
       <ProductList />
-      <form onSubmit={handleCreate}>
-        <input
-          name="product_name"
-          type="text"
-          value={products.product_name}
-          onChange={handleInputChange}
-        />
-        <input
-          name="description"
-          type="text"
-          value={products.description}
-          onChange={handleInputChange}
-        />
-        <input
-          name="price"
-          type="text"
-          value={products.price}
-          onChange={handleInputChange}
-        />
-        <button>Create a product</button>
-      </form>
+      <div className="input">
+        <h1 className="createText">Create your own product here: </h1>
+        <form onSubmit={handleSubmit}>
+          <input
+            className="productNameInput"
+            type="text"
+            placeholder="Product Name"
+            value={productName}
+            onChange={(e) => setProductName(e.target.value)}
+            required
+          />
+          <textarea
+            className="productDescriptionInput"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            required
+          />
+          <input
+            className="productPriceInput"
+            type="text"
+            placeholder="Price"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            required
+          />
+          <input
+            className="productImageInput"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+          <button type="submit" className="submit">
+            Upload Product
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default ProductPage;
+export default ProductUpload;
