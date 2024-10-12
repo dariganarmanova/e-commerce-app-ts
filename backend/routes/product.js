@@ -37,6 +37,23 @@ app.get('/products', verifyToken, async (req, res, next) => {
     }
 });
 
+app.get("statusGet", verifyToken, async (req, res) => {
+    const { id: userId } = req.user
+    try {
+        const result = await pool.query("SELECT status FROM products", [userId])
+        const response = result.rows
+        if (response) {
+            res.status(201).json(response)
+        } else {
+            const err = new Error("Unable to fetch data")
+            err.status(404)
+            return next(err)
+        }
+    } catch (error) {
+        next(err)
+    }
+})
+
 //here get all of the products 
 app.get("/productsAll", verifyToken, async (req, res, next) => {
     try {
@@ -45,7 +62,7 @@ app.get("/productsAll", verifyToken, async (req, res, next) => {
 
         const resultProduct = result.rows
         const imageUrl = result.rows
-
+        console.log(resultProduct)
         if (result || image) {
             res.status(201).json({ ...resultProduct, imageUrl })
         } else {

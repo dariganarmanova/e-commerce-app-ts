@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../context";
 
 interface Sign {
   id: number;
@@ -14,6 +15,11 @@ const SignUp = () => {
   const [password, setPassword] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [role, setRole] = useState<"buyer" | "seller">("buyer");
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("LoginComponent must be used within an AuthProvider");
+  }
+  const { setIsLoggedIn } = context;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +36,7 @@ const SignUp = () => {
       localStorage.setItem("token", token);
       if (result.data) {
         alert("User successfuly signed in");
+        setIsLoggedIn(true);
       } else {
         alert("Some problem with server");
       }

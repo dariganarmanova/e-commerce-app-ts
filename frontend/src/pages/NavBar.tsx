@@ -17,9 +17,6 @@ const NavBar = () => {
             <Link to="/products">Your products</Link>
           </li>
           <li>
-            <Link to="/allProducts">View all products on marketplace</Link>
-          </li>
-          <li>
             <Link to="/analytics">
               View analytics of quantities of your products selled
             </Link>

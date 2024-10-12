@@ -1,5 +1,6 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { AuthContext } from "../context";
 
 interface User {
   id: number;
@@ -16,6 +17,12 @@ const LogIn: React.FC = () => {
     password: "",
   });
 
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("LoginComponent must be used within an AuthProvider");
+  }
+  const { setIsLoggedIn } = context;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -24,6 +31,7 @@ const LogIn: React.FC = () => {
       localStorage.setItem("token", token);
       if (result) {
         alert("User logged in");
+        setIsLoggedIn(true);
       } else {
         alert("Invalid credentials");
       }
@@ -31,6 +39,7 @@ const LogIn: React.FC = () => {
       console.log(error);
     }
   };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
