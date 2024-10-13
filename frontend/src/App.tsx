@@ -7,6 +7,7 @@ import AuthPage from "./pages/AuthPage";
 import LogIn from "./components/LogIn";
 import ProductPage from "./pages/ProductPage";
 import ProductList from "./pages/ProductList";
+import AnalyticsPage from "./pages/AnalyticsPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/log" element={<LogIn />} />
         <Route path="/products" element={<ProductPage />} />
         <Route path="/products" element={<ProductList />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
       </Routes>
     </Router>
   );

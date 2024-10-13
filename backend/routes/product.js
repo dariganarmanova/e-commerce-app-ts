@@ -37,20 +37,19 @@ app.get('/products', verifyToken, async (req, res, next) => {
     }
 });
 
-app.get("statusGet", verifyToken, async (req, res) => {
+app.get("/statusGet", verifyToken, async (req, res, next) => {
     const { id: userId } = req.user
     try {
-        const result = await pool.query("SELECT status FROM products", [userId])
+        const result = await pool.query("SELECT status FROM products WHERE user_id=$1", [userId])
         const response = result.rows
         if (response) {
             res.status(201).json(response)
+            console.log(response)
         } else {
-            const err = new Error("Unable to fetch data")
-            err.status(404)
-            return next(err)
+            res.status(404).json({ message: "resource was not found" })
         }
     } catch (error) {
-        next(err)
+        res.status(500).json({ message: "internal server error?" })
     }
 })
 
@@ -70,7 +69,7 @@ app.get("/productsAll", verifyToken, async (req, res, next) => {
             err.status(404)
             return next(err)
         }
-    } catch (error) {
+    } catch (err) {
         next(err)
     }
 })

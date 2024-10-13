@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-//import * as d3 from "d3";
+import * as d3 from "d3";
 import axios from "axios";
 
 interface Status {
@@ -9,26 +9,40 @@ interface Status {
 const AnalyticsPage = () => {
   const token = localStorage.getItem("token");
   const [response, setResponse] = useState<Status[]>([]);
-  const ref = useRef();
+  const ref = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios.get("http://localhost:5005/statusGet", {
-        headers: {
-          Authorization: `Bearer: ${token}`,
-        },
-      });
-      if (result) {
-        setResponse(result.data);
-        console.log(response);
-      } else {
-        console.log("unable to fetch");
+      try {
+        const result = await axios.get("http://localhost:5005/statusGet", {
+          headers: {
+            Authorization: `Bearer: ${token}`,
+          },
+        });
+        if (result) {
+          setResponse(result.data);
+          console.log(result.data);
+        } else {
+          console.log("unable to fetch");
+        }
+      } catch (error) {
+        console.log(error);
       }
     };
     fetchData();
   }, []);
 
-  return <div></div>;
+  useEffect(() => {
+    const svg = d3.select(ref.current);
+    svg.attr("width", 500).attr("height", 500);
+    svg.selectAll("circle").data();
+  }, []);
+
+  return (
+    <div>
+      <svg ref={ref}></svg>
+    </div>
+  );
 };
 
 export default AnalyticsPage;
