@@ -1,4 +1,4 @@
-# Scheduler with Google Calendar for UNIST CSE courses.
+# E-commerce Web-Application/Seller-side Dashboard.
 
 ## Table of Contents
 
