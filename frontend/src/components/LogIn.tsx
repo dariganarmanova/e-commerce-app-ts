@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../context";
+import "../index.css";
 
 interface User {
   id: number;
@@ -41,8 +42,8 @@ const LogIn: React.FC = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="containerSign">
+      <form onSubmit={handleSubmit} className="formSign">
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}

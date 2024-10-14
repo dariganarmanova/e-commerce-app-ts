@@ -83,3 +83,95 @@
   border-radius: 6px;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.navbar {
+}
+
+.list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 48px;
+  margin-bottom: 58px;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-size: larger;
+  margin-top: 48px;
+  margin-left: 22px;
+}
+
+.list a {
+  color: black;
+  text-decoration: none;
+}
+
+.list a:hover {
+  text-decoration: underline;
+}
+
+.authText {
+  font-family: Arial, Helvetica, sans-serif;
+  display: inline-block;
+}
+
+.authText button {
+  font-family: Arial, Helvetica, sans-serif;
+  padding: 5px;
+  border: 1px solid;
+  border-radius: 6px;
+  background-color: aliceblue;
+}
+
+.authText button:hover {
+  background-color: azure;
+}
+
+.containerSign {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.formSign {
+  display: block;
+  width: 300px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.formSign input .formSign select {
+  padding: 35px;
+  width: 100%;
+  outline: none;
+}
+
+.formSign label {
+  margin-bottom: 5px;
+  display: block;
+  font-size: large;
+}
+
+.formSign button {
+  padding: 5px;
+  border: 1px solid;
+  border-radius: 5px;
+}
+
+.home h1 {
+  font-size: larger;
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.textRef h1 {
+  font-size: medium;
+  font-family: Arial, Helvetica, sans-serif;
+  margin-left: 130px;
+}

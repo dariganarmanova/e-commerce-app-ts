@@ -45,8 +45,8 @@ const SignUp = () => {
     }
   };
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="containerSign">
+      <form onSubmit={handleSubmit} className="formSign">
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}

@@ -5,8 +5,8 @@ import "../index.css";
 const NavBar = () => {
   return (
     <div className="bg-sky-200">
-      <nav>
-        <ul>
+      <nav className="navbar">
+        <ul className="list">
           <li>
             <Link to="/">Home</Link>
           </li>
