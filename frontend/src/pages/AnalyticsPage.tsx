@@ -35,47 +35,46 @@ const AnalyticsPage = () => {
   useEffect(() => {
     if (!response || response.length === 0) return;
 
-    const width = 500;
-    const height = 500;
-    const radius = Math.min(width, height) / 2 - 10; // radius for the pie chart
+    const width = 530;
+    const height = 530;
+    const radius = Math.min(width, height) / 2 - 10;
 
     const svg = d3
       .select(ref.current)
       .attr("width", width)
       .attr("height", height);
 
-    // Clear any previous drawings
     svg.selectAll("*").remove();
 
-    // Prepare the data
     const notSoldCount = response.filter(
       (word) => word.status === "not sold"
-    ).length;
+    ).length; //not sold length
     const soldCount = response.filter((word) => word.status === "sold").length;
+    //sold lentgh
 
     const data = [
       { status: "Sold", value: soldCount },
       { status: "Not sold", value: notSoldCount },
     ];
 
-    // Create a pie layout
+    //create a pie layout
     const pie = d3
       .pie<{ status: string; value: number }>()
       .value((d) => d.value);
 
     const arc = d3
       .arc<d3.PieArcDatum<{ status: string; value: number }>>()
-      .innerRadius(0) // full pie chart (no inner radius for now)
-      .outerRadius(radius); // outer radius for arcs
+      .innerRadius(0) //full pie chart (no inner radius for now)
+      .outerRadius(radius); //outer radius for arcs
 
     const arcs = pie(data);
 
-    // Append 'g' element for the pie chart, centered in the SVG
+    //append 'g' element for the pie chart, centered in the SVG
     const g = svg
       .append("g")
       .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
-    // Create the pie chart arcs
+    //create the pie chart arcs
     g.selectAll("path")
       .data(arcs)
       .enter()
@@ -84,6 +83,28 @@ const AnalyticsPage = () => {
       .attr("fill", (d, i) => (i === 0 ? "green" : "red"))
       .attr("stroke", "white")
       .style("stroke-width", "2px");
+
+    const legend = svg
+      .selectAll(".legend")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("class", "legend")
+      .attr("transform", (d, i) => `translate(450, ${i * 20 + 100})`); // Position the legend
+
+    legend
+      .append("rect")
+      .attr("width", 18)
+      .attr("height", 18)
+      .attr("fill", (d, i) => (i === 0 ? "green" : "red")); //match colors with pie slices
+
+    //add text to legend
+    legend
+      .append("text")
+      .attr("x", 24)
+      .attr("y", 9)
+      .attr("dy", "0.35em")
+      .text((d) => d.status);
   }, [response]);
 
   return (
